@@ -1,0 +1,128 @@
+<div class="container">
+  <h1>Список пользователей</h1>
+  <div class="controls">
+    <label for="sortDirection">Сортировка:</label>
+    <select id="sortDirection" [(ngModel)]="sortDirection" (change)="fetchPersons()">
+      <option value="asc">По возрастанию</option>
+      <option value="desc">По убыванию</option>
+    </select>
+  </div>
+  <div class="controls">
+    <label for="sortProperty">Сортировка:</label>
+    <select id="sortProperty" [(ngModel)]="sortProperty" (change)="fetchPersons()">
+      <option value="id">По id</option>
+      <option value="name">По name</option>
+      <option value="eyeColor">По eyeColor</option>
+      <option value="hairColor">По hairColor</option>
+      <option value="location">По location</option>
+      <option value="weight">По weight</option>
+      <option value="nationality">По nationality</option>
+      <option value="owner_id">По owner_id</option>
+    </select>
+  </div>
+  <div class="controls">
+    <label for="pageSize">Размер страницы:</label>
+    <select id="pageSize" [(ngModel)]="pageSize" (change)="fetchPersons()">
+      <option value="5">5</option>
+      <option value="10">10</option>
+      <option value="15">15</option>
+      <option value="25">25</option>
+    </select>
+  </div>
+
+  <table class="table">
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Имя</th>
+      <th>Локация</th>
+      <th>Цвет глаз</th>
+      <th>Цвет волос</th>
+      <th>Вес</th>
+      <th>Национальность</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let person of persons">
+      <td>{{ person.id }}</td>
+      <td>{{ person.name }}</td>
+      <td> имя={{ person.location.name }} x={{ person.location.x }} y={{ person.location.y }}</td>
+      <td>{{ person.eyeColor }}</td>
+      <td>{{ person.hairColor }}</td>
+      <td>{{ person.weight }}</td>
+      <td>{{ person.nationality }}</td>
+      @if (person.owner_id == userService.user?.id) {
+        <td>
+          <button (click)="openEditModal(person)" class="btn">⋮</button>
+        </td>
+      }
+    </tr>
+    </tbody>
+  </table>
+  <button (click)="decrementPage()">налево</button>
+  <span>{{ page + 1 }}</span>
+  <button (click)="incrementPage()">направо</button>
+  <div *ifAuthenticated="true" class="mt-lg-0 d-flex align-items-md-center">
+    <button (click)="addPerson()">Добавить Person</button>
+  </div>
+
+</div>
+
+
+<div class="modal" *ngIf="isEditModalOpen">
+  <div class="modal-content">
+    <h2>Редактировать пользователя</h2>
+    <label>
+      Имя:
+      <input [(ngModel)]="personToEdit.name"/>
+    </label>
+    <label>
+      Имя локации:
+      <input [(ngModel)]="personToEdit.location.name"/>
+    </label>
+    <label>
+      X локации:
+      <input [(ngModel)]="personToEdit.location.x"/>
+    </label>
+    <label>
+      Y локации:
+      <input [(ngModel)]="personToEdit.location.y"/>
+    </label>
+    <label>
+      Z локации:
+      <input [(ngModel)]="personToEdit.location.z"/>
+    </label>
+    <label>
+      Цвет глаз:
+      <select [(ngModel)]="personToEdit.eyeColor">
+        <option *ngFor="let color of colors" [value]="color">
+          {{ color }}
+        </option>
+      </select>
+    </label>
+    <label>
+      Цвет волос:
+      <select [(ngModel)]="personToEdit.hairColor">
+        <option *ngFor="let color of colors" [value]="color">
+          {{ color }}
+        </option>
+      </select>
+    </label>
+    <label>
+      Вес:
+      <input min="0" [(ngModel)]="personToEdit.weight" type="number"/>
+    </label>
+    <label>
+      Национальность:
+      <select [(ngModel)]="personToEdit.nationality">
+        <option *ngFor="let country of countries" [value]="country">
+          {{ country }}
+        </option>
+      </select>
+    </label>
+    <div class="modal-actions">
+      <button (click)="saveChanges()">Сохранить</button>
+      <button (click)="closeEditModal()">Отмена</button>
+    </div>
+  </div>
+</div>
