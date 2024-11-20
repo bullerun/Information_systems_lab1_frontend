@@ -40,6 +40,7 @@
       <th>Цвет волос</th>
       <th>Вес</th>
       <th>Национальность</th>
+      <th>Действие</th>
     </tr>
     </thead>
     <tbody>
@@ -53,8 +54,19 @@
       <td>{{ person.nationality }}</td>
       @if (person.owner_id == userService.user?.id) {
         <td>
-          <button (click)="openEditModal(person)" class="btn">⋮</button>
+          <div class="dropdown">
+            <a href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+              ⋮
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+              <li><button (click)="openEditModal(person)" class="dropdown-item" >Изменить</button></li>
+              <li><button (click)="deletePerson(person)" class="dropdown-item" >Удалить</button></li>
+
+            </ul>
+          </div>
         </td>
+      } @else {
+        <td>&nbsp;</td>
       }
     </tr>
     </tbody>

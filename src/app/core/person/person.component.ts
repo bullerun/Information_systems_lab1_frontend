@@ -3,7 +3,7 @@ import {PersonService} from '../_service/person.service';
 import {Color, Country, Person} from '../models/person.model';
 import {FormsModule} from '@angular/forms';
 import {NgForOf, NgIf} from '@angular/common';
-import {UserService} from '../services/user.service';
+import {UserService} from '../_service/user.service';
 import {IfAuthenticatedDirective} from '../../shared/directives/if-authenticated.directive';
 
 @Component({
@@ -112,5 +112,19 @@ export class PersonComponent implements OnInit {
     }
 
     this.closeEditModal();
+  }
+
+  deletePerson(person: Person) {
+    this.personService.deletePerson(person.id).subscribe(
+      {
+        next: () => {
+          this.fetchPersons();
+        },
+        error: (err) => {
+          console.error(err);
+          alert(err.error.weight);
+        },
+      }
+    )
   }
 }

@@ -7,7 +7,7 @@ import {
 } from "@angular/forms";
 import {ActivatedRoute, Router, RouterLink} from "@angular/router";
 import {NgClass, NgIf} from "@angular/common";
-import {UserService} from "../services/user.service";
+import {UserService} from "../_service/user.service";
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 
 interface AuthForm {

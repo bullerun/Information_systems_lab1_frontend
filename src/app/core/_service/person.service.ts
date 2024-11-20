@@ -29,4 +29,8 @@ export class PersonService {
     console.log(`${this.apiUrl}`);
     return this.http.post(`${this.apiUrl}/add`, person)
   }
+
+  deletePerson(personId:number) {
+    return this.http.delete(`${this.apiUrl}/delete?id=${personId}`)
+  }
 }

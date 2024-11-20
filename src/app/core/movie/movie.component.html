@@ -1,0 +1,135 @@
+<div class="container">
+  <h1>Список пользователей</h1>
+  <div class="controls">
+    <label for="sortDirection">Сортировка:</label>
+    <select id="sortDirection" [(ngModel)]="sortDirection" (change)="fetchMovie()">
+      <option value="asc">По возрастанию</option>
+      <option value="desc">По убыванию</option>
+    </select>
+  </div>
+  <div class="controls">
+    <label for="sortProperty">Сортировка:</label>
+    <select id="sortProperty" [(ngModel)]="sortProperty" (change)="fetchMovie()">
+      <option value="id">По id</option>
+      <option value="name">По name</option>
+      <option value="goldenPalmCount">По eyeColor</option>
+      <option value="genre">По hairColor</option>
+      <option value="length">По location</option>
+      <option value="coordinates">По weight</option>
+      <option value="mpaaRating">По nationality</option>
+      <option value="owner_id">По owner_id</option>
+      <option value="owner_id">По budget</option>
+      <option value="owner_id">По oscarsCount</option>
+      <option value="owner_id">По director</option>
+      <option value="owner_id">По operator</option>
+    </select>
+  </div>
+  <div class="controls">
+    <label for="pageSize">Размер страницы:</label>
+    <select id="pageSize" [(ngModel)]="pageSize" (change)="fetchMovie()">
+      <option value="5">5</option>
+      <option value="10">10</option>
+      <option value="15">15</option>
+      <option value="25">25</option>
+    </select>
+  </div>
+
+  <table class="table">
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Имя</th>
+      <th>Координаты</th>
+      <th>Дата создания</th>
+      <th>Количество оскаров</th>
+      <th>бюджет</th>
+      <th>сборы</th>
+      <th>Возрастной рейтинг</th>
+      <th>Режиссер</th>
+      <th>Сценарист</th>
+      <th>Оператор</th>
+      <th>Длина</th>
+      <th>Количество пальм</th>
+      <th>Жанр</th>
+      <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let movie of movies">
+      <td>{{ movie.id }}</td>
+      <td>{{ movie.name }}</td>
+      <td> x={{ movie.coordinates.x }} y={{ movie.coordinates.y }}</td>
+      <td>{{ movie.creationDate }}</td>
+      <td>{{ movie.oscarsCount }}</td>
+      <td>{{ movie.budget }}</td>
+      <td>{{ movie.totalBoxOffice }}</td>
+      <td>{{ movie.mpaaRating }}</td>
+      <td>
+        <button (click)="showPerson(movie.director)">{{ movie.director.name }}</button>
+      </td>
+      @if (movie.screenwriter) {
+        <td>
+          <button (click)="showPerson(movie.screenwriter)">{{ movie.screenwriter }}</button>
+        </td>
+      } @else {
+        <td></td>
+      }
+      <td>
+        <button (click)="showPerson(movie.operator)">{{ movie.operator.name }}</button>
+      </td>
+      <td>{{ movie.length }}</td>
+      <td>{{ movie.goldenPalmCount }}</td>
+      <td>{{ movie.genre }}</td>
+      @if (movie.owner_id == userService.user?.id) {
+        <td>
+          <button (click)="openEditModal(movie)" class="btn">⋮</button>
+        </td>
+      }
+    </tr>
+    </tbody>
+  </table>
+  <button (click)="decrementPage()">налево</button>
+  <span>{{ page + 1 }}</span>
+  <button (click)="incrementPage()">направо</button>
+  <div *ifAuthenticated="true" class="mt-lg-0 d-flex align-items-md-center">
+    <button (click)="addMovie()">Добавить movie</button>
+  </div>
+</div>
+
+
+<div class="modal" *ngIf="isShow">
+  <div class="modal-content">
+    <table class="table">
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Имя</th>
+        <th>Локация</th>
+        <th>Цвет глаз</th>
+        <th>Цвет волос</th>
+        <th>Вес</th>
+        <th>Национальность</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>{{ personToShow.id }}</td>
+        <td>{{ personToShow.name }}</td>
+        <td> имя={{ personToShow.location.name }} x={{ personToShow.location.x }} y={{ personToShow.location.y }}</td>
+        <td>{{ personToShow.eyeColor }}</td>
+        <td>{{ personToShow.hairColor }}</td>
+        <td>{{ personToShow.weight }}</td>
+        <td>{{ personToShow.nationality }}</td>
+      </tr>
+      </tbody>
+    </table>
+    <div class="modal-actions">
+      <button (click)="closeShow()">Отмена</button>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal" *ngIf="isAdd">
+  <app-movie-form></app-movie-form>
+</div>
