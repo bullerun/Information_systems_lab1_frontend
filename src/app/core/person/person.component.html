@@ -59,8 +59,12 @@
               ⋮
             </a>
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-              <li><button (click)="openEditModal(person)" class="dropdown-item" >Изменить</button></li>
-              <li><button (click)="deletePerson(person)" class="dropdown-item" >Удалить</button></li>
+              <li>
+                <button (click)="openEditModal(person)" class="dropdown-item">Изменить</button>
+              </li>
+              <li>
+                <button (click)="deletePerson(person)" class="dropdown-item">Удалить</button>
+              </li>
 
             </ul>
           </div>
@@ -78,63 +82,80 @@
     <button (click)="addPerson()">Добавить Person</button>
   </div>
 
+
 </div>
 
 
 <div class="modal" *ngIf="isEditModalOpen">
-  <div class="modal-content">
-    <h2>Редактировать пользователя</h2>
-    <label>
-      Имя:
-      <input [(ngModel)]="personToEdit.name"/>
-    </label>
-    <label>
-      Имя локации:
-      <input [(ngModel)]="personToEdit.location.name"/>
-    </label>
-    <label>
-      X локации:
-      <input [(ngModel)]="personToEdit.location.x"/>
-    </label>
-    <label>
-      Y локации:
-      <input [(ngModel)]="personToEdit.location.y"/>
-    </label>
-    <label>
-      Z локации:
-      <input [(ngModel)]="personToEdit.location.z"/>
-    </label>
-    <label>
-      Цвет глаз:
-      <select [(ngModel)]="personToEdit.eyeColor">
-        <option *ngFor="let color of colors" [value]="color">
-          {{ color }}
-        </option>
-      </select>
-    </label>
-    <label>
-      Цвет волос:
-      <select [(ngModel)]="personToEdit.hairColor">
-        <option *ngFor="let color of colors" [value]="color">
-          {{ color }}
-        </option>
-      </select>
-    </label>
-    <label>
-      Вес:
-      <input min="0" [(ngModel)]="personToEdit.weight" type="number"/>
-    </label>
-    <label>
-      Национальность:
-      <select [(ngModel)]="personToEdit.nationality">
-        <option *ngFor="let country of countries" [value]="country">
-          {{ country }}
-        </option>
-      </select>
-    </label>
-    <div class="modal-actions">
-      <button (click)="saveChanges()">Сохранить</button>
-      <button (click)="closeEditModal()">Отмена</button>
+  <form [formGroup]="personForm" (ngSubmit)="saveChanges()" novalidate>
+    <div class="modal-content">
+      <h2>Редактировать пользователя</h2>
+
+      <label>
+        Имя:
+        <input formControlName="name"/>
+        <div *ngIf="personForm.get('name')?.touched && personForm.get('name')?.invalid">
+          <small *ngIf="personForm.get('name')?.errors?.['required']">Поле "Имя" обязательно.</small>
+          <small *ngIf="personForm.get('name')?.errors?.['minlength']">Имя не может быть пустым.</small>
+        </div>
+
+      </label>
+
+      <div formGroupName="location" class="inner-form">
+        <label>
+          Имя локации:
+          <input formControlName="name"/>
+        </label>
+
+        <label>
+          X локации:
+          <input formControlName="x" type="number"/>
+        </label>
+
+        <label>
+          Y локации:
+          <input formControlName="y" type="number"/>
+        </label>
+      </div>
+
+      <label>
+        Цвет глаз:
+        <select formControlName="eyeColor">
+          <option *ngFor="let color of colors" [value]="color">{{ color }}</option>
+        </select>
+      </label>
+
+      <label>
+        Цвет волос:
+        <select formControlName="hairColor">
+          <option *ngFor="let color of colors" [value]="color">{{ color }}</option>
+        </select>
+      </label>
+
+      <label>
+        Вес:
+        <input formControlName="weight" type="number"/>
+        <div *ngIf="personForm.get('weight')?.touched && personForm.get('weight')?.invalid">
+          <small *ngIf="personForm.get('weight')?.errors?.['required']">Поле "Вес" обязательно.</small>
+          <small *ngIf="personForm.get('weight')?.errors?.['min']">Вес должен быть больше 0.</small>
+        </div>
+
+      </label>
+
+      <label>
+        Национальность:
+        <select formControlName="nationality">
+          <option *ngFor="let country of countries" [value]="country">{{ country }}</option>
+        </select>
+      </label>
+
+      <div class="modal-actions">
+        <button type="submit" [disabled]="personForm.invalid">Сохранить</button>
+        <button type="button" (click)="closeEditModal()">Отмена</button>
+        <button (click)="debugForm()">Отладить форму</button>
+
+      </div>
     </div>
-  </div>
+  </form>
 </div>
+

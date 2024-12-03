@@ -40,64 +40,64 @@
     </select>
   </div>
 
-  <fieldset>
-    <legend>Режиссёр</legend>
-    <div>
-      <label>Выбрать ID существующего:</label>
-      <select formControlName="directorId">
-        <option value="">Не выбрано</option>
-        <option *ngFor="let person of existingPersons" [value]="person.id">{{ person.id }}: {{ person.name }}</option>
-      </select>
-    </div>
+<!--  <fieldset>-->
+<!--    <legend>Режиссёр</legend>-->
+<!--    <div>-->
+<!--      <label>Выбрать ID существующего:</label>-->
+<!--      <select formControlName="directorId">-->
+<!--        <option value="">Не выбрано</option>-->
+<!--        <option *ngFor="let person of existingPersons" [value]="person.id">{{ person.id }}: {{ person.name }}</option>-->
+<!--      </select>-->
+<!--    </div>-->
 
-    <div>
-      <label>Или создать нового:</label>
-      <div formGroupName="newDirector">
-        <div>
-          <label>Имя:</label>
-          <input formControlName="name"/>
-        </div>
-        <div>
-          <label>Цвет глаз:</label>
-          <input formControlName="eyeColor"/>
-        </div>
-        <div>
-          <label>Цвет волос:</label>
-          <input formControlName="hairColor"/>
-        </div>
-        <div>
-          <label>Вес:</label>
-          <input formControlName="weight" type="number"/>
-        </div>
-        <div formGroupName="location">
-          <label>Локация:</label>
-          <input formControlName="name" placeholder="Название"/>
-          <input formControlName="x" placeholder="X" type="number"/>
-          <input formControlName="y" placeholder="Y" type="number"/>
-        </div>
-        <div>
-          <label>Национальность:</label>
-          <input formControlName="nationality"/>
-        </div>
-      </div>
-    </div>
-  </fieldset>
+<!--    <div>-->
+<!--      <label>Или создать нового:</label>-->
+<!--      <div formGroupName="newDirector">-->
+<!--        <div>-->
+<!--          <label>Имя:</label>-->
+<!--          <input formControlName="name"/>-->
+<!--        </div>-->
+<!--        <div>-->
+<!--          <label>Цвет глаз:</label>-->
+<!--          <input formControlName="eyeColor"/>-->
+<!--        </div>-->
+<!--        <div>-->
+<!--          <label>Цвет волос:</label>-->
+<!--          <input formControlName="hairColor"/>-->
+<!--        </div>-->
+<!--        <div>-->
+<!--          <label>Вес:</label>-->
+<!--          <input formControlName="weight" type="number"/>-->
+<!--        </div>-->
+<!--        <div formGroupName="location">-->
+<!--          <label>Локация:</label>-->
+<!--          <input formControlName="name" placeholder="Название"/>-->
+<!--          <input formControlName="x" placeholder="X" type="number"/>-->
+<!--          <input formControlName="y" placeholder="Y" type="number"/>-->
+<!--        </div>-->
+<!--        <div>-->
+<!--          <label>Национальность:</label>-->
+<!--          <input formControlName="nationality"/>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </fieldset>-->
 
-  <div>
-    <label>Сценарист (ID):</label>
-    <select formControlName="screenwriterId">
-      <option value="">Не выбрано</option>
-      <option *ngFor="let person of existingPersons" [value]="person.id">{{ person.id }}: {{ person.name }}</option>
-    </select>
-  </div>
+<!--  <div>-->
+<!--    <label>Сценарист (ID):</label>-->
+<!--    <select formControlName="screenwriterId">-->
+<!--      <option value="">Не выбрано</option>-->
+<!--      <option *ngFor="let person of existingPersons" [value]="person.id">{{ person.id }}: {{ person.name }}</option>-->
+<!--    </select>-->
+<!--  </div>-->
 
-  <div>
-    <label>Оператор (ID):</label>
-    <select formControlName="operatorId">
-      <option value="">Не выбрано</option>
-      <option *ngFor="let person of existingPersons" [value]="person.id">{{ person.id }}: {{ person.name }}</option>
-    </select>
-  </div>
+<!--  <div>-->
+<!--    <label>Оператор (ID):</label>-->
+<!--    <select formControlName="operatorId">-->
+<!--      <option value="">Не выбрано</option>-->
+<!--      <option *ngFor="let person of existingPersons" [value]="person.id">{{ person.id }}: {{ person.name }}</option>-->
+<!--    </select>-->
+<!--  </div>-->
 
   <div>
     <label>Длина:</label>
@@ -109,5 +109,21 @@
     <input formControlName="goldenPalmCount" type="number"/>
   </div>
 
-  <button type="submit">Создать фильм</button>
+  <div>
+    <label>Режиссер</label>
+    <input formControlName="director_id" type="number"/>
+  </div>
+  <div>
+    <label>Сценарист</label>
+    <input formControlName="screenwriter_id" type="number"/>
+  </div>
+  <div>
+    <label>оператор</label>
+    <input formControlName="operator_id" type="number"/>
+  </div>
+
+  <div class="modal-actions">
+    <button type="submit" [disabled]="movieForm.invalid">Сохранить</button>
+    <button type="button" (click)="closeEditModal()">Отмена</button>
+  </div>
 </form>

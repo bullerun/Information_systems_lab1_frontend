@@ -34,8 +34,8 @@ export class MovieComponent implements OnInit {
   pageSize: 5 | 10 | 25 = 10
   isShow = false;
   personToShow: any = null;
-  isAdd = false
-
+  isOpen = false
+  selectedMovie: any | null = null;
   constructor(
     protected readonly userService: UserService,
     private readonly movieService: MovieService,
@@ -59,9 +59,7 @@ export class MovieComponent implements OnInit {
       });
   }
 
-  openEditModal(movie: Movie) {
 
-  }
 
   decrementPage() {
     this.page -= this.page > 0 ? 1 : 0;
@@ -74,7 +72,8 @@ export class MovieComponent implements OnInit {
   }
 
   addMovie() {
-    this.isAdd = true;
+    this.selectedMovie = null
+    this.isOpen = true;
   }
 
   showPerson(person: Person): void {
@@ -84,5 +83,47 @@ export class MovieComponent implements OnInit {
 
   closeShow() {
     this.isShow = false;
+  }
+
+  saveMovie(movie: Movie): void {
+    console.log('Сохраненные данные:', movie);
+
+    if (movie.id){
+      this.movieService.editMovie(movie).subscribe({
+        next: () => {
+          this.fetchMovie()
+        }, error: (err) => {
+          console.log(err)
+          alert(err)
+        }
+      })
+    }else {
+      this.movieService.addMovie(movie).subscribe({
+        next: () => {
+          this.fetchMovie();
+        },
+        error: (err) => {
+          console.error(err);
+          alert(err.error.weight);
+        },
+      });
+    }
+
+
+    this.isOpen = false;
+  }
+  deletePerson(movie: Movie) {
+    this.movieService.deleteMovie(movie).subscribe({
+      next: () => {
+        this.fetchMovie();
+      }, error: (err) => {
+        console.error(err);
+        alert(err.error.weight);
+      },
+    })
+  }
+  openEditModal(movie: any): void {
+    this.selectedMovie = movie;
+    this.isOpen = true;
   }
 }

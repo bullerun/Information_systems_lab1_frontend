@@ -69,7 +69,7 @@
       </td>
       @if (movie.screenwriter) {
         <td>
-          <button (click)="showPerson(movie.screenwriter)">{{ movie.screenwriter }}</button>
+          <button (click)="showPerson(movie.screenwriter)">{{ movie.screenwriter.name }}</button>
         </td>
       } @else {
         <td></td>
@@ -82,8 +82,23 @@
       <td>{{ movie.genre }}</td>
       @if (movie.owner_id == userService.user?.id) {
         <td>
-          <button (click)="openEditModal(movie)" class="btn">⋮</button>
+          <div class="dropdown">
+            <a href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+              ⋮
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+              <li>
+                <button (click)="openEditModal(movie)" class="dropdown-item">Изменить</button>
+              </li>
+              <li>
+                <button (click)="deletePerson(movie)" class="dropdown-item">Удалить</button>
+              </li>
+
+            </ul>
+          </div>
         </td>
+      } @else {
+        <td>&nbsp;</td>
       }
     </tr>
     </tbody>
@@ -130,6 +145,12 @@
 </div>
 
 
-<div class="modal" *ngIf="isAdd">
-  <app-movie-form></app-movie-form>
+<div class="modal" *ngIf="isOpen">
+  <app-movie-form
+    [movie]="selectedMovie"
+    (closeModal)="isOpen = false"
+    (saveChanges)="saveMovie($event)">
+  </app-movie-form>
 </div>
+
+

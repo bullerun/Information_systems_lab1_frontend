@@ -1,8 +1,8 @@
-import {Component, OnInit} from '@angular/core';
-import {PersonService} from '../_service/person.service';
 import {Color, Country, Person} from '../models/person.model';
-import {FormsModule} from '@angular/forms';
+import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
+import {Component, OnInit} from '@angular/core';
 import {NgForOf, NgIf} from '@angular/common';
+import {PersonService} from '../_service/person.service';
 import {UserService} from '../_service/user.service';
 import {IfAuthenticatedDirective} from '../../shared/directives/if-authenticated.directive';
 
@@ -14,6 +14,7 @@ import {IfAuthenticatedDirective} from '../../shared/directives/if-authenticated
     FormsModule,
     NgForOf,
     NgIf,
+    ReactiveFormsModule,
     IfAuthenticatedDirective
   ],
   styleUrls: ["./edit.css"]
@@ -24,34 +25,32 @@ export class PersonComponent implements OnInit {
   sortProperty: 'id' | 'name' | 'eyeColor' | 'hairColor' | 'location' | 'weight' | 'nationality' | 'owner_id' = 'id';
   page = 0;
   pageSize: 5 | 10 | 25 = 10;
-  personToEdit: any = null;
+
   isEditModalOpen = false;
+
   colors = Object.values(Color);
   countries = Object.values(Country);
-  defaultPerson: Person = JSON.parse(JSON.stringify({
-    "eyeColor": "BLACK",
-    "nationality": "SPAIN",
-    "name": "",
-    "weight": 1,
-    "location": {
-      "name": "123",
-      "x": 1,
-      "y": 1
-    },
-    "hairColor": "RED"
-  }));
 
-  decrementPage() {
-    this.page -= this.page > 0 ? 1 : 0;
-    this.fetchPersons();
-  }
+  personForm: FormGroup;
 
-  incrementPage() {
-    this.page += 1;
-    this.fetchPersons();
-  }
-
-  constructor(private personService: PersonService, protected userService: UserService) {
+  constructor(
+    private fb: FormBuilder,
+    private personService: PersonService,
+    protected userService: UserService
+  ) {
+    this.personForm = this.fb.group({
+      id: [null],
+      name: ['', [Validators.required, Validators.minLength(1)]],
+      eyeColor: ['', Validators.required],
+      hairColor: ['', Validators.required],
+      weight: [0, [Validators.required, Validators.min(0.1)]],
+      location: this.fb.group({
+        name: ['', Validators.required],
+        x: [0, Validators.required],
+        y: [0, Validators.required],
+      }),
+      nationality: ['', Validators.required],
+    });
   }
 
   ngOnInit(): void {
@@ -71,36 +70,35 @@ export class PersonComponent implements OnInit {
   }
 
   openEditModal(person: Person): void {
-    this.personToEdit = {...person}
+    this.personForm.patchValue(person); // Заполняем форму данными для редактирования
     this.isEditModalOpen = true;
   }
 
   addPerson(): void {
-    this.personToEdit = this.defaultPerson
+    this.personForm.reset(); // Сбрасываем форму для добавления нового пользователя
     this.isEditModalOpen = true;
   }
 
   closeEditModal(): void {
-    this.personToEdit = null;
+    this.personForm.reset(); // Сбрасываем данные формы
     this.isEditModalOpen = false;
   }
 
   saveChanges(): void {
-    if (this.personToEdit.id) {
-      const index = this.persons.findIndex((p) => p.id === this.personToEdit.id);
-      if (index !== -1) {
-        this.personService.editPerson(this.personToEdit).subscribe({
-          next:
-            this.persons[index] = {...this.personToEdit},
-          error: (err) => {
-            console.error(err);
-            // TODO: Сделать встраивание ошибки
-            alert(err.error.weight);
-          },
-        });
-      }
+    const personData = this.personForm.value;
+
+    if (personData.id) {
+      this.personService.editPerson(personData).subscribe({
+        next: () => {
+          this.fetchPersons();
+        },
+        error: (err) => {
+          console.error(err);
+          alert(err.error.weight);
+        },
+      });
     } else {
-      this.personService.addPerson(this.personToEdit).subscribe({
+      this.personService.addPerson(personData).subscribe({
         next: () => {
           this.fetchPersons();
         },
@@ -114,17 +112,38 @@ export class PersonComponent implements OnInit {
     this.closeEditModal();
   }
 
-  deletePerson(person: Person) {
-    this.personService.deletePerson(person.id).subscribe(
-      {
-        next: () => {
-          this.fetchPersons();
-        },
-        error: (err) => {
-          console.error(err);
-          alert(err.error.weight);
-        },
-      }
-    )
+  deletePerson(person: Person): void {
+    this.personService.deletePerson(person.id).subscribe({
+      next: () => {
+        this.fetchPersons();
+      },
+      error: (err) => {
+        console.error(err);
+        alert(err.error.weight);
+      },
+    });
   }
+  decrementPage() {
+    this.page -= this.page > 0 ? 1 : 0;
+    this.fetchPersons();
+  }
+
+  incrementPage() {
+    this.page += 1;
+    this.fetchPersons();
+  }
+
+  debugForm() {
+    console.log('Статус формы:', this.personForm.status);
+    console.log('Ошибки формы:', this.personForm.errors);
+    Object.keys(this.personForm.controls).forEach(controlName => {
+      const control = this.personForm.get(controlName);
+      console.log(`Поле ${controlName}:`, {
+        value: control?.value,
+        status: control?.status,
+        errors: control?.errors,
+      });
+    });
+  }
+
 }
