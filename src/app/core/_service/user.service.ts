@@ -4,7 +4,7 @@ import {Observable, BehaviorSubject} from "rxjs";
 
 import {map, distinctUntilChanged, tap} from "rxjs/operators";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
-import {User} from "../models/user.model";
+import {Role, User} from "../models/user.model";
 import {Router} from "@angular/router";
 
 @Injectable({providedIn: "root"})
@@ -15,7 +15,8 @@ export class UserService  {
     .pipe(distinctUntilChanged());
 
   public isAuthenticated = this.currentUser.pipe(map((user) => !!user));
-  user: User | null = null;
+  public isAdmin = this.currentUser.pipe(map((user) => (user?.role === Role.ADMIN)));
+  public user: User | null = null;
 
   constructor(
     private readonly http: HttpClient,
@@ -65,10 +66,6 @@ export class UserService  {
     void this.router.navigate(["/"]);
   }
 
-  // ngOnInit() {
-  //   let user: User = this.getUser()
-  //   user ? this.setAuth(user) : this.router.navigate(["/login"]);
-  // }
 
   setAuth(user: User): void {
     this.saveUser(user);

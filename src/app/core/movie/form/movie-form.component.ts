@@ -1,7 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {Movie, MovieGenre, MpaaRating} from '../../models/movie';
-import {Person} from '../../models/person.model';
 import {NgForOf} from '@angular/common';
 
 
@@ -29,14 +28,14 @@ export class MovieFormComponent implements OnInit {
   ngOnInit(): void {
     this.initializeForm();
     if (this.movie) {
-      this.populateForm(this.movie); // Заполнить форму, если объект передан
+      this.populateForm(this.movie);
     }
   }
   populateForm(movie: any): void {
     movie.director_id = movie.director.id;
     movie.screenwriter_id = movie.screenwriter.id;
     movie.operator_id = movie.operator.id;
-    this.movieForm.patchValue(movie); // Заполнить форму значениями из объекта
+    this.movieForm.patchValue(movie);
   }
 
   initializeForm(): void {

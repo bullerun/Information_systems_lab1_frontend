@@ -5,6 +5,7 @@ import {UserService} from './core/_service/user.service';
 import {map} from 'rxjs/operators';
 import {MovieComponent} from './core/movie/movie.component';
 import {PersonComponent} from './core/person/person.component';
+import {AdminQueueTableComponent} from './core/admin/admin-queue.component';
 
 export const routes: Routes = [
   {
@@ -28,5 +29,9 @@ export const routes: Routes = [
   {
     path: "person",
     component: PersonComponent,
+  },
+  {
+    path: "admin",
+    component: AdminQueueTableComponent,
   },
 ];

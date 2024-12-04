@@ -70,17 +70,17 @@ export class PersonComponent implements OnInit {
   }
 
   openEditModal(person: Person): void {
-    this.personForm.patchValue(person); // Заполняем форму данными для редактирования
+    this.personForm.patchValue(person);
     this.isEditModalOpen = true;
   }
 
   addPerson(): void {
-    this.personForm.reset(); // Сбрасываем форму для добавления нового пользователя
+    this.personForm.reset()
     this.isEditModalOpen = true;
   }
 
   closeEditModal(): void {
-    this.personForm.reset(); // Сбрасываем данные формы
+    this.personForm.reset();
     this.isEditModalOpen = false;
   }
 

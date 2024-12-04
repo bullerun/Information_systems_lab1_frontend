@@ -1,0 +1,34 @@
+<table *ifAdminRole="true" class="table">
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>Owner ID</th>
+    <th>Status</th>
+    <th>Действия</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let queue of adminQueues">
+    <td>{{ queue.id }}</td>
+    <td>{{ queue.ownerId }}</td>
+    <td>{{ queue.status }}</td>
+    <td>
+      <div class="dropdown">
+        <a href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+          ⋮
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+          <li>
+            <button (click)="approve(queue)" class="dropdown-item">Принять</button>
+          </li>
+          <li>
+            <button (click)="reject(queue)" class="dropdown-item">Отклонить</button>
+          </li>
+
+        </ul>
+      </div>
+    </td>
+  </tr>
+  </tbody>
+</table>
+<button *ifAdminRole="false" (click)="wantAdmin()">стать админом</button>

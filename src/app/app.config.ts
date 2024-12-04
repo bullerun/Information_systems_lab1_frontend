@@ -9,7 +9,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
     provideHttpClient(
-      withInterceptors([tokenInterceptor]), // Используем обновленный interceptor
+      withInterceptors([tokenInterceptor]),
     ),
     {
       provide: APP_INITIALIZER,
