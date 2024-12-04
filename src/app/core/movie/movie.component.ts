@@ -8,6 +8,8 @@ import {Person} from '../models/person.model';
 import {Movie} from '../models/movie';
 import {FormsModule} from '@angular/forms';
 import {MovieFormComponent} from './form/movie-form.component';
+import {WebSocketService} from '../_service/websocket.service';
+import {RxStompService} from '@stomp/ng2-stompjs';
 
 
 @Component({
@@ -23,6 +25,7 @@ import {MovieFormComponent} from './form/movie-form.component';
     NgForOf,
     MovieFormComponent,
   ],
+  providers: [WebSocketService, RxStompService],
   standalone: true,
   styleUrls: ["./edit.css"]
 })
@@ -36,14 +39,28 @@ export class MovieComponent implements OnInit {
   personToShow: any = null;
   isOpen = false
   selectedMovie: any | null = null;
+
   constructor(
     protected readonly userService: UserService,
     private readonly movieService: MovieService,
+    private webSocketService: WebSocketService
   ) {
   }
 
   ngOnInit(): void {
+
+    this.webSocketService.subscribeToMovieUpdates().subscribe((update) => {
+      if (update.action === 'deleted') {
+        this.movies = this.movies.filter((movie) => movie.id !== update.id);
+      } else {
+        const index = this.movies.findIndex((movie) => movie.id === update.id);
+        if (index !== -1) {
+          this.movies[index] = update;
+        }
+      }
+    });
     this.fetchMovie()
+
   }
 
 
@@ -58,7 +75,6 @@ export class MovieComponent implements OnInit {
         }
       });
   }
-
 
 
   decrementPage() {
@@ -88,7 +104,7 @@ export class MovieComponent implements OnInit {
   saveMovie(movie: Movie): void {
     console.log('Сохраненные данные:', movie);
 
-    if (movie.id){
+    if (movie.id) {
       this.movieService.editMovie(movie).subscribe({
         next: () => {
           this.fetchMovie()
@@ -97,7 +113,7 @@ export class MovieComponent implements OnInit {
           alert(err)
         }
       })
-    }else {
+    } else {
       this.movieService.addMovie(movie).subscribe({
         next: () => {
           this.fetchMovie();
@@ -112,6 +128,7 @@ export class MovieComponent implements OnInit {
 
     this.isOpen = false;
   }
+
   deletePerson(movie: Movie) {
     this.movieService.deleteMovie(movie).subscribe({
       next: () => {
@@ -122,6 +139,7 @@ export class MovieComponent implements OnInit {
       },
     })
   }
+
   openEditModal(movie: any): void {
     this.selectedMovie = movie;
     this.isOpen = true;

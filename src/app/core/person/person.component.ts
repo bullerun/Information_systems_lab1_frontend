@@ -5,6 +5,8 @@ import {NgForOf, NgIf} from '@angular/common';
 import {PersonService} from '../_service/person.service';
 import {UserService} from '../_service/user.service';
 import {IfAuthenticatedDirective} from '../../shared/directives/if-authenticated.directive';
+import {WebSocketService} from '../_service/websocket.service';
+import {RxStompService} from '@stomp/ng2-stompjs';
 
 @Component({
   selector: 'app-person-table',
@@ -17,6 +19,7 @@ import {IfAuthenticatedDirective} from '../../shared/directives/if-authenticated
     ReactiveFormsModule,
     IfAuthenticatedDirective
   ],
+  providers: [WebSocketService, RxStompService],
   styleUrls: ["./edit.css"]
 })
 export class PersonComponent implements OnInit {
@@ -36,7 +39,8 @@ export class PersonComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private personService: PersonService,
-    protected userService: UserService
+    protected userService: UserService,
+    private webSocketService: WebSocketService,
   ) {
     this.personForm = this.fb.group({
       id: [null],
@@ -54,6 +58,19 @@ export class PersonComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.webSocketService.subscribeToPersonUpdates().subscribe((update) => {
+      console.log(123123)
+      if (update.action === 'deleted') {
+        console.log(123123)
+        this.persons = this.persons.filter((person) => person.id !== update.id);
+      } else {
+        const index = this.persons.findIndex((person) => person.id === update.id);
+        console.log(123123)
+        if (index !== -1) {
+          this.persons[index] = update;
+        }
+      }
+    });
     this.fetchPersons();
   }
 
