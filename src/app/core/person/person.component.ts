@@ -5,8 +5,9 @@ import {NgForOf, NgIf} from '@angular/common';
 import {PersonService} from '../_service/person.service';
 import {UserService} from '../_service/user.service';
 import {IfAuthenticatedDirective} from '../../shared/directives/if-authenticated.directive';
-import {WebSocketService} from '../_service/websocket.service';
+
 import {RxStompService} from '@stomp/ng2-stompjs';
+import {WebSocketService} from '../_service/websocket.service';
 
 @Component({
   selector: 'app-person-table',
@@ -59,16 +60,17 @@ export class PersonComponent implements OnInit {
 
   ngOnInit(): void {
     this.webSocketService.subscribeToPersonUpdates().subscribe((update) => {
-      console.log(123123)
-      if (update.action === 'deleted') {
-        console.log(123123)
-        this.persons = this.persons.filter((person) => person.id !== update.id);
-      } else {
+      console.log(update)
+      if (update.name) {
         const index = this.persons.findIndex((person) => person.id === update.id);
-        console.log(123123)
+        console.log(index)
+        console.log(update);
+        console.log(update.id);
         if (index !== -1) {
           this.persons[index] = update;
         }
+      } else {
+        this.persons = this.persons.filter((person) => person.id !== update.id);
       }
     });
     this.fetchPersons();
@@ -135,9 +137,8 @@ export class PersonComponent implements OnInit {
         this.fetchPersons();
       },
       error: (err) => {
-        console.error(err);
-        alert(err.error.weight);
-      },
+        alert(err["error"]["error"]);
+      }
     });
   }
   decrementPage() {
@@ -162,5 +163,4 @@ export class PersonComponent implements OnInit {
       });
     });
   }
-
 }

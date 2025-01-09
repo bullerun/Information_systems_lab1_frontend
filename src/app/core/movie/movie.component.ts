@@ -48,7 +48,6 @@ export class MovieComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
     this.webSocketService.subscribeToMovieUpdates().subscribe((update) => {
       if (update.action === 'deleted') {
         this.movies = this.movies.filter((movie) => movie.id !== update.id);
